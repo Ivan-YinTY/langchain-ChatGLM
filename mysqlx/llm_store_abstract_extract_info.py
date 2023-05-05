@@ -3,7 +3,7 @@ import mysql.connector
 def insert_data(data_list):
     # 连接MySQL数据库
     cnx = mysql.connector.connect(user='user_kmsp', password='Tasly_User01!',
-                                  host='10.6.3.167', database='kmsp')
+                                   host='10.6.3.167', database='kmsp')
 
     cursor = cnx.cursor()
 
@@ -21,5 +21,6 @@ def insert_data(data_list):
     cnx.close()
 
 # 调用insert_data函数，将数据批量插入到MySQL表中
-data_list = [('gene1', 'effect1', 'herb1','1'), ('gene2', 'effect2', 'herb2','2'), ('gene3', 'effect3', 'herb3','3')]
+# data_list = [('gene1', 'effect1', 'herb1','1'), ('gene2', 'effect2', 'herb2','2'), ('gene3', 'effect3', 'herb3','3')]
+data_list = [('CD68', '下调', '芪参益气滴丸', '22240383'), ('transforming growth factor beta 1', '下调', '芪参益气滴丸', '22240383'), ('VEGF', '上调', '芪参益气滴丸', '19203810'), ('bFGF', '上调', '芪参益气滴丸', '19203810'), ('PDGF-B', '上调', '芪参益气滴丸', '19203810')]
 insert_data(data_list)

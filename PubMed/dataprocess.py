@@ -16,7 +16,7 @@ def save_abstract_to_txt(excel_path, output_folder):
 
         # 将abstract内容保存到txt文件中
         txt_filename = output_folder + '/' + pmid + '.txt'
-        with open(txt_filename, 'w') as f:
+        with open(txt_filename, 'w', encoding='utf-8') as f:
             f.write(abstract)
 
 if __name__ == "__main__":
