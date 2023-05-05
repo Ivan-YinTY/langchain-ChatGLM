@@ -1,12 +1,10 @@
 import os
 
-# OPENAI_API_KEY= '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'#WANG
-OPENAI_API_KEY= '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'#ZHANG
-# OPENAI_API_KEY= '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'#YIN
+OPENAI_API_KEY= ''
 
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
-openai_model_name = "text-davinci-002"
+openai_model_name = "text-davinci-003"
 
 
 extract_template = """已知信息：
