@@ -1,5 +1,6 @@
 from langchain.llms import OpenAI
 from textextract.gpt_doc_extract import *
+#from mysql.llm_store_abstract_extract_info import insert_data
 
 
 OpenAI.api_key = os.getenv("OPENAI_API_KEY")
