@@ -1,18 +1,16 @@
-# 开发版中药关系抽取
+# 基于本地知识的 ChatGLM 应用实现
 
 ## 介绍
 
-🌍 [原始项目说明文档](README_cn.md)
+🌍 [_READ THIS IN ENGLISH_](README_en.md)
 
-💡 基于 [imClumsyPanda /langchain-ChatGLM](https://github.com/imClumsyPanda/langchain-ChatGLM) 项目开发，分支master。
+🤖️ 一种利用 [ChatGLM-6B](https://github.com/THUDM/ChatGLM-6B) + [langchain](https://github.com/hwchase17/langchain) 实现的基于本地知识的 ChatGLM 应用。增加 [clue-ai/ChatYuan](https://github.com/clue-ai/ChatYuan) 项目的模型 [ClueAI/ChatYuan-large-v2](https://huggingface.co/ClueAI/ChatYuan-large-v2) 的支持。
 
-## 功能
+💡 受 [GanymedeNil](https://github.com/GanymedeNil) 的项目 [document.ai](https://github.com/GanymedeNil/document.ai) 和 [AlexZhangji](https://github.com/AlexZhangji) 创建的 [ChatGLM-6B Pull Request](https://github.com/THUDM/ChatGLM-6B/pull/216) 启发，建立了全部基于开源模型实现的本地知识问答应用。
 
-✅ 自动将从PubMed上爬取的包含摘要的XLSX文件转换为以PMID命名的TXT文件。
+✅ 本项目中 Embedding 默认选用的是 [GanymedeNil/text2vec-large-chinese](https://huggingface.co/GanymedeNil/text2vec-large-chinese/tree/main)，LLM 默认选用的是 [ChatGLM-6B](https://github.com/THUDM/ChatGLM-6B)。依托上述模型，本项目可实现全部使用**开源**模型**离线私有部署**。
 
-✅ 自动调用OpenAI提供的模型进行关系抽取，支持整个文件夹批量处理。
-
-✅ 自动将抽取出的关系保存到XLSX文档或MYSQL数据库中。
+⛓️ 本项目实现原理如下图所示，过程包括加载文件 -> 读取文本 -> 文本分割 -> 文本向量化 -> 问句向量化 -> 在文本向量中匹配出与问句向量最相似的`top k`个 -> 匹配出的文本作为上下文和问题一起添加到`prompt`中 -> 提交给`LLM`生成回答。
 
 ![实现原理图](img/langchain+chatglm.png)
 
@@ -26,17 +24,55 @@
 
 📓 [ModelWhale 在线运行项目](https://www.heywhale.com/mw/project/643977aa446c45f4592a1e59)
 
+## 变更日志
 
+参见 [变更日志](docs/CHANGELOG.md)。
+
+## 硬件需求
+
+- ChatGLM-6B 模型硬件需求
+  
+    | **量化等级**   | **最低 GPU 显存**（推理） | **最低 GPU 显存**（高效参数微调） |
+    | -------------- | ------------------------- | --------------------------------- |
+    | FP16（无量化） | 13 GB                     | 14 GB                             |
+    | INT8           | 8 GB                     | 9 GB                             |
+    | INT4           | 6 GB                      | 7 GB                              |
+
+- Embedding 模型硬件需求
+
+    本项目中默认选用的 Embedding 模型 [GanymedeNil/text2vec-large-chinese](https://huggingface.co/GanymedeNil/text2vec-large-chinese/tree/main) 约占用显存 3GB，也可修改为在 CPU 中运行。
+
+## Docker 部署
+为了能让容器使用主机GPU资源，需要在主机上安装 [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit)。具体安装步骤如下：
+```shell
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit-base
+sudo systemctl daemon-reload 
+sudo systemctl restart docker
+```
+安装完成后，可以使用以下命令编译镜像和启动容器：
+```
+docker build -f Dockerfile-cuda -t chatglm-cuda:latest .
+docker run --gpus all -d --name chatglm -p 7860:7860  chatglm-cuda:latest
+
+#若要使用离线模型，请配置好模型路径，然后此repo挂载到Container
+docker run --gpus all -d --name chatglm -p 7860:7860 -v ~/github/langchain-ChatGLM:/chatGLM  chatglm-cuda:latest
+```
 
 
 ## 开发部署
 
+### 软件需求
+
+本项目已在 Python 3.8 - 3.10，CUDA 11.7 环境下完成测试。已在 Windows、ARM 架构的 macOS、Linux 系统中完成测试。
+
+### 从本地加载模型
+
+请参考 [THUDM/ChatGLM-6B#从本地加载模型](https://github.com/THUDM/ChatGLM-6B#从本地加载模型)
+
 ### 1. 安装环境
 
-```shell
-# 安装依赖
-$ pip install -r requirements.txt
-```
+参见 [安装指南](docs/INSTALL.md)。
 
 ### 2. 设置模型默认参数
 
