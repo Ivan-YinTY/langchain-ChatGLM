@@ -7,6 +7,7 @@ nltk
 sentence-transformers
 beautifulsoup4
 icetk
+tqdm
 cpm_kernels
 faiss-cpu
 accelerate

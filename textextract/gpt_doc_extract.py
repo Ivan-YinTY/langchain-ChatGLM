@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from tqdm import tqdm
 from langchain.llms import OpenAI
 from chains.local_doc_qa import load_file
 from configs.extract_model_config import *
@@ -72,9 +73,9 @@ def process_file_batch(directory_path):
     # Get a list of all .txt files in the directory
     file_list = [f for f in os.listdir(directory_path) if f.endswith('.txt')]
 
-    # Process each file
+    # Process each file with progress bar
     result = []
-    for file_path in file_list:
+    for file_path in tqdm(file_list, desc="Processing files", unit="file"):
         try:
             text = extract_text_relation(os.path.join(directory_path, file_path))
             formatted = format_text_relation(text)
