@@ -11,5 +11,5 @@ if __name__ == "__main__":
     print(temp)
     temp = format_dblist(temp)
     print(temp)
-    insert_data(temp)
+    # insert_data(temp)
 

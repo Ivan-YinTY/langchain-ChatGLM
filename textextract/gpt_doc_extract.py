@@ -50,6 +50,19 @@ def format_text_relation(text):
     return formatted_list
 
 
+def filter_list(input_list):
+    result_list = []
+    pmid = ''
+    for item in input_list:
+        if len(item) == 4 and '/' not in item[0] and '/' not in item[1] and '/' not in item[2] and '/' not in item[3]:
+            if pmid == '':
+                pmid = item[3]
+            elif pmid != item[3]:
+                item[3] = pmid
+            result_list.append(item)
+    return result_list
+
+
 def process_file_batch(directory_path):
     # Check if the directory exists
     if not os.path.exists(directory_path):
@@ -65,6 +78,7 @@ def process_file_batch(directory_path):
         try:
             text = extract_text_relation(os.path.join(directory_path, file_path))
             formatted = format_text_relation(text)
+            formatted = filter_list(formatted)
             result.extend(formatted)
         except Exception as e:
             print(f"Error processing {file_path}: {e}")
