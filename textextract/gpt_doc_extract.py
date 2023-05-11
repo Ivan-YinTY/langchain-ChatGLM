@@ -68,6 +68,19 @@ def filter_list(input_list):
             result_list.append(item)
     return result_list
 
+def filter_list_simple(input_list):
+    result_list = []
+    pmid = ''
+    for item in input_list:
+        if len(item) == 4:
+            if pmid == '':
+                pmid = item[3]
+            elif pmid != item[3]:
+                item[3] = pmid
+            result_list.append(item)
+    return result_list
+
+
 
 def process_file_batch(directory_path):
     # Check if the directory exists
@@ -84,7 +97,7 @@ def process_file_batch(directory_path):
         try:
             text = extract_text_relation(os.path.join(directory_path, file_path))
             formatted = format_text_relation(text)
-            formatted = filter_list(formatted)
+            formatted = filter_list_simple(formatted)
             result.extend(formatted)
         except Exception as e:
             print(f"Error processing {file_path}: {e}")
@@ -117,19 +130,27 @@ def save_to_excel(data, headers=['Herb', 'Effect', 'Gene', 'PMID'], file_name='r
 
 
 if __name__ == "__main__":
-    text = """
-    芪参益气滴丸，下调，CD68，22240383
-    芪参益气滴丸，下调，transforming growth factor beta 1，22240383。
-    """
+    # text = """
+    # 芪参益气滴丸，下调，CD68，22240383
+    # 芪参益气滴丸，下调，transforming growth factor beta 1，22240383。
+    # """
+    #
+    # formatted_list = format_text_relation(text)
+    # print(formatted_list)
+    #
+    # data = [['芪参益气滴丸', '下调', 'CD68', '22240383'],
+    #         ['芪参益气滴丸', '下调', 'transforming growth factor beta 1', '22240383'],
+    #         ['芪参益气滴丸', '下调', 'VEGF', '19203810'],
+    #         ['芪参益气滴丸', '下调', 'bFGF', '19203810'],
+    #         ['芪参益气滴丸', '下调', 'PDGF-B', '19203810']]
+    # file_name = './result.xlsx'
+    #
+    # save_to_excel(data, file_name=file_name)
 
-    formatted_list = format_text_relation(text)
-    print(formatted_list)
-
-    data = [['芪参益气滴丸', '下调', 'CD68', '22240383'],
+    print(filter_list_simple([['芪参益气滴丸', '下调', 'CD/68', '22240383'],
             ['芪参益气滴丸', '下调', 'transforming growth factor beta 1', '22240383'],
-            ['芪参益气滴丸', '下调', 'VEGF', '19203810'],
-            ['芪参益气滴丸', '下调', 'bFGF', '19203810'],
-            ['芪参益气滴丸', '下调', 'PDGF-B', '19203810']]
-    file_name = './result.xlsx'
+            ['芪参益气滴丸', '下调', '/', '22240383'],
+            ['芪参益气滴丸', '下调', 'bFGF', '/'],
+            ['芪参益气滴丸', '下调', 'bFGF', '2224'],
+            ['芪参益气滴丸', '下调', 'PDGF-B', '22240383']]))
 
-    save_to_excel(data, file_name=file_name)
