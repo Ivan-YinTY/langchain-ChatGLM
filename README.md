@@ -12,7 +12,6 @@
 
 ![output_xlsx](dev_img/output_xlsx.png)
 
-## 开发部署
 
 ### 1. 安装环境
 
@@ -37,12 +36,15 @@ $ cd /content/langchain-ChatGLM/PubMed
 $ python dataprocess.py
 ```
 
+
 处理后的TXT结果文件保存在PubMed/Output目录下
 
 执行后效果如下图所示：
 ![txt_datasets](dev_img/txt_datasets.png)
 
 ### 4. 执行关系抽取脚本
+=======
+
 
 > 注：OpenAI的API调用过程中尽可能使用原生住宅IP，否则会经常拒绝访问。
 
@@ -60,4 +62,3 @@ $ python extract_demo.py
 
 🎉 [原始项目说明文档](README_cn.md)
 
-💡 基于 [imClumsyPanda /langchain-ChatGLM](https://github.com/imClumsyPanda/langchain-ChatGLM) 项目开发，分支master。
