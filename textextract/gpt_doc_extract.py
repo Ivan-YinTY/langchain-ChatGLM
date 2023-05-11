@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from tqdm import tqdm
 from langchain.llms import OpenAI
+# from langchain.chat_models import ChatOpenAI
 from chains.local_doc_qa import load_file
 from configs.extract_model_config import *
 from textsplitter import ChineseTextSplitter
@@ -10,24 +11,28 @@ from langchain.docstore.document import Document
 from langchain.document_loaders import UnstructuredFileLoader
 
 
-def load_article_file(filepath):
+def load_article_file(filepath, sentence_size=SENTENCE_SIZE):
     if filepath.lower().endswith(".md"):
         loader = UnstructuredFileLoader(filepath, mode="elements")
         docs = loader.load()
     elif filepath.lower().endswith(".pdf"):
         loader = UnstructuredFileLoader(filepath)
-        textsplitter = ChineseTextSplitter(pdf=True)
-        docs = loader.load_and_split(textsplitter)
+        # textsplitter = ChineseTextSplitter(pdf=True, sentence_size=sentence_size)
+        # docs = loader.load_and_split(textsplitter)
+        docs = loader.load()
     else:
         loader = UnstructuredFileLoader(filepath, mode="elements")
-        textsplitter = ChineseTextSplitter(pdf=False)
-        docs = loader.load_and_split(text_splitter=textsplitter)
+        # textsplitter = ChineseTextSplitter(pdf=False, sentence_size=sentence_size)
+        # docs = loader.load_and_split(text_splitter=textsplitter)
+        docs = loader.load()
+
+    # print(docs[:3])
     return docs
 
 
 def extract_text_relation(filepath):
     # 加载文件
-    article_text = load_file(filepath=filepath)
+    article_text = load_article_file(filepath=filepath)
 
     # 创建模板以及生成提示
     extract_prompt = PromptTemplate(template=extract_template, input_variables=["context"])

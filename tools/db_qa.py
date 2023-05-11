@@ -5,7 +5,7 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain import OpenAI, SQLDatabase, SQLDatabaseChain
 from langchain.chains import SQLDatabaseSequentialChain
 
-os.environ["OPENAI_API_KEY"] = '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'  #Me
+os.environ["OPENAI_API_KEY"] = ''  #Me
 
 _DEFAULT_TEMPLATE = """Given an input question, first create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer.
 Use the following format:

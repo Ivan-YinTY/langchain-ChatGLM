@@ -5,7 +5,7 @@ from langchain.sql_database import SQLDatabase
 from langchain.llms.openai import OpenAI
 from langchain.agents import AgentExecutor
 
-os.environ["OPENAI_API_KEY"] = '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'  #Me
+os.environ["OPENAI_API_KEY"] = ''  #Me
 
 if __name__ == "__main__":
     db = SQLDatabase.from_uri(
