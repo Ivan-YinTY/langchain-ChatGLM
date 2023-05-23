@@ -1,11 +1,11 @@
 import os
+import re
 import time
 import json
 import pandas as pd
 from tqdm import tqdm
 from langchain.llms import OpenAI
 # from langchain.chat_models import ChatOpenAI
-from chains.local_doc_qa import load_file
 from configs.extract_model_config import *
 from textsplitter import ChineseTextSplitter
 from langchain import PromptTemplate, LLMChain
@@ -69,7 +69,24 @@ def format_text_relation(text, fp):
     return formatted_list
 
 
+def fix_json(json_str):
+    if json_str.endswith(']'):
+        return json_str
+    elif json_str.endswith('}'):
+        return json_str[:-1] + ']'
+    else:
+        for i in range(len(json_str) - 1, -1, -1):
+            if json_str[i] == '}':
+                return json_str[:i+1] + ']'
+
+
+def test_fix_json():
+    print(fix_json('[{"drug": "QSDP", "gene": "PLA2", "effect": "down-regulation"}, {"drug": "QSDP", "gene": "COX1", "effect": "down-regulation"}, {"drug": "QSDP", "gene": '))
+
+
 def format_json_relation(json_data, fp):
+    json_data = fix_json(json_data)
+
     try:
         data = json.loads(json_data)
     except Exception as e:
@@ -200,5 +217,6 @@ if __name__ == "__main__":
     #         ['芪参益气滴丸', '下调', 'bFGF', '2224'],
     #         ['芪参益气滴丸', '下调', 'PDGF-B', '22240383']]))
 
-    test_format_json_relation()
+    # test_format_json_relation()
 
+    test_fix_json()
