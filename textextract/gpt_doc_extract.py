@@ -1,17 +1,15 @@
 import os
-import re
 import time
 import json
 import pandas as pd
 from tqdm import tqdm
 from langchain.llms import OpenAI
-# from langchain.chat_models import ChatOpenAI
 from configs.extract_model_config import *
 from textsplitter import ChineseTextSplitter
 from langchain import PromptTemplate, LLMChain
 from langchain.docstore.document import Document
 from langchain.document_loaders import UnstructuredFileLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter, NLTKTextSplitter
 
 
 def load_article_file(filepath, sentence_size=SENTENCE_SIZE):
@@ -24,14 +22,17 @@ def load_article_file(filepath, sentence_size=SENTENCE_SIZE):
         # docs = loader.load_and_split(textsplitter)
         docs = loader.load()
     else:
-        loader = UnstructuredFileLoader(filepath, mode="elements")
+        loader = UnstructuredFileLoader(filepath, mode="single")
         # textsplitter = ChineseTextSplitter(pdf=False, sentence_size=sentence_size)
         # docs = loader.load_and_split(text_splitter=textsplitter)
         docs = loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=CHUNK_SIZE, chunk_overlap=50
+        chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
     )
+    # text_splitter = NLTKTextSplitter(
+    #     chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+    # )
     docs = text_splitter.split_documents(docs)
     # print(docs[:3])
     return docs
@@ -46,7 +47,7 @@ def extract_text_relation(filepath, temperature=0):
     # print(extract_prompt.format(context=article_text))
 
     # 初始化LLM模型和链式模型
-    if openai_model_name == "gpt-3.5-turbo":
+    if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-3.5-turbo-0301":
         from langchain.chat_models import ChatOpenAI
         llm = ChatOpenAI(model_name=openai_model_name, temperature=temperature)
     else:
