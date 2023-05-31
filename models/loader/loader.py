@@ -4,7 +4,7 @@ import os
 import re
 import time
 from pathlib import Path
-from peft import PeftModel
+#from peft import PeftModel
 from typing import Optional, List, Dict, Tuple, Union
 import torch
 import transformers
@@ -305,7 +305,7 @@ class LoaderCheckPoint:
                     params['device_map'] = {'': 0}
             self.model.resize_token_embeddings(len(self.tokenizer))
 
-            self.model = PeftModel.from_pretrained(self.model, Path(f"{self.lora_dir}/{lora_names[0]}"), **params)
+#            self.model = PeftModel.from_pretrained(self.model, Path(f"{self.lora_dir}/{lora_names[0]}"), **params)
 
             for lora in lora_names[1:]:
                 self.model.load_adapter(Path(f"{self.lora_dir}/{lora}"), lora)

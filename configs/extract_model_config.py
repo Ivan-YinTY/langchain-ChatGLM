@@ -65,19 +65,19 @@ list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effec
 {{text}}
 """
 
-# multi_round_conversation_template_2 = """
-# Previously I gave you the following text delimited by three backslashes and asked you to "List abbreviation of gene/protein, which Qishen Yiqi , also called QSYQ has effect of Output,again."
-# Your previous answer was "{{STEP1}}" Now I want to ask you "Isn't there another gene name or protein name? Output,again."
-#
-# ```{{text}}```
-# """
-
 multi_round_conversation_template_2 = """
-Q:"list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow."{{text}}
-A:"{{STEP1}}"
-Q:"Isn't there another gene name or protein name? Output,again."
+Previously I gave you the following text delimited by three backslashes and asked you to "List abbreviation of gene/protein, which Qishen Yiqi , also called QSYQ has effect of inhibit or improve."
+Your previous answer was "{{STEP1}}" Now I want to ask you "Isn't there another gene name or protein name? Output,again."
 
+```{{text}}```
 """
+
+# multi_round_conversation_template_2 = """
+# Q:"list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow."{{text}}
+# A:"{{STEP1}}"
+# Q:"Isn't there another gene name or protein name? Output,again."
+#
+# """
 
 multi_round_conversation_template_3 = """
 I will give you two sentences and ask you to summarize the names of all the genes and proteins that appear in these two sentences, separated by commas.
