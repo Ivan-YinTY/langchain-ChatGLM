@@ -5,6 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 from langchain.llms import OpenAI
 from configs.extract_model_config import *
+from langchain.chains import SequentialChain
 from textsplitter import ChineseTextSplitter
 from langchain import PromptTemplate, LLMChain
 from langchain.docstore.document import Document
@@ -27,14 +28,15 @@ def load_article_file(filepath, sentence_size=SENTENCE_SIZE):
         # docs = loader.load_and_split(text_splitter=textsplitter)
         docs = loader.load()
 
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
-    )
-    # text_splitter = NLTKTextSplitter(
-    #     chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
-    # )
-    docs = text_splitter.split_documents(docs)
-    # print(docs[:3])
+    if MULTI_ROUND_CONVERSATION == False:
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+        )
+        # text_splitter = NLTKTextSplitter(
+        #     chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+        # )
+        docs = text_splitter.split_documents(docs)
+        # print(docs[:3])
     return docs
 
 
@@ -56,10 +58,55 @@ def extract_text_relation(filepath, temperature=0):
     llm_chain = LLMChain(prompt=extract_prompt, llm=llm)
     time.sleep(2)
 
-    print(llm_chain.run(article_text))
+    res = llm_chain.run(article_text)
+    # print(res)
 
     # 运行链式模型并返回结果
-    return llm_chain.run(article_text), filepath
+    return res, filepath
+
+
+def extract_text_relation_multiround(filepath, temperature=0):
+    # 加载文件
+    article_text = load_article_file(filepath=filepath)
+
+    # 创建模板以及生成提示
+    multi_prompt_1 = PromptTemplate(template=multi_round_conversation_template_1, input_variables=["text"],
+                                    template_format="jinja2")
+    multi_prompt_2 = PromptTemplate(template=multi_round_conversation_template_2, input_variables=["text", "STEP1"],
+                                    template_format="jinja2")
+    multi_prompt_3 = PromptTemplate(template=multi_round_conversation_template_3, input_variables=["STEP1", "STEP2"],
+                                    template_format="jinja2")
+    multi_prompt_4 = PromptTemplate(template=multi_round_conversation_template_4, input_variables=["text", "STEP3"],
+                                    template_format="jinja2")
+    # print(extract_prompt.format(context=article_text))
+
+    # 初始化LLM模型和链式模型
+    if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-3.5-turbo-0301":
+        from langchain.chat_models import ChatOpenAI
+        llm = ChatOpenAI(model_name=openai_model_name, temperature=temperature)
+    else:
+        llm = OpenAI(model_name=openai_model_name, temperature=temperature)
+
+    STEP1_chain = LLMChain(llm=llm, prompt=multi_prompt_1, output_key="STEP1")
+    STEP2_chain = LLMChain(llm=llm, prompt=multi_prompt_2, output_key="STEP2")
+    STEP3_chain = LLMChain(llm=llm, prompt=multi_prompt_3, output_key="STEP3")
+    STEP4_chain = LLMChain(llm=llm, prompt=multi_prompt_4, output_key="STEP4")
+
+    llm_chain = SequentialChain(
+        chains=[STEP1_chain, STEP2_chain, STEP3_chain, STEP4_chain],
+        input_variables=["text"],
+        # Here we return multiple variables
+        output_variables=["STEP1", "STEP2", "STEP3", "STEP4"],
+        verbose=True)
+
+    time.sleep(2)
+
+    res = llm_chain(article_text)
+
+    # print(res)
+
+    # 运行链式模型并返回结果
+    return res["STEP4"], filepath
 
 
 def format_text_relation(text, fp):
@@ -159,7 +206,10 @@ def process_file_batch(directory_path, temperature=0):
     result = []
     for file_path in tqdm(file_list, desc="Processing files", unit="file"):
         try:
-            text, fp = extract_text_relation(os.path.join(directory_path, file_path), temperature=temperature)
+            if MULTI_ROUND_CONVERSATION == False:
+                text, fp = extract_text_relation(os.path.join(directory_path, file_path), temperature=temperature)
+            else:
+                text, fp = extract_text_relation_multiround(os.path.join(directory_path, file_path), temperature=temperature)
             formatted = format_json_relation(text, fp)
             formatted = filter_list_simple(formatted)
             result.extend(formatted)
@@ -220,4 +270,6 @@ if __name__ == "__main__":
 
     # test_format_json_relation()
 
-    test_fix_json()
+    # test_fix_json()
+
+    extract_text_relation_multiround(filepath='D:/TSL/Week2/langchain-ChatGLM/PubMed/Output/25122164.txt', temperature=0)

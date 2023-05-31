@@ -11,7 +11,7 @@ OpenAI.api_key = os.getenv("OPENAI_API_KEY")
 
 if __name__ == "__main__":
     with get_openai_callback() as cb:
-        temp = process_file_batch("./PubMed/Output",temperature=LLM_TEMPERATURE)
+        temp = process_file_batch("./PubMed/Output", temperature=LLM_TEMPERATURE)
         save_to_excel(temp, headers=['Herb', 'Effect', 'Gene', 'PMID'], file_name='./result.xlsx')
         print(temp)
         temp = format_dblist(temp)
