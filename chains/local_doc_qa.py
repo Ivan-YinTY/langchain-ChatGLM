@@ -30,6 +30,10 @@ def load_file(filepath, sentence_size=SENTENCE_SIZE):
         loader = CSVLoader(filepath)
         # textsplitter = ChineseTextSplitter(pdf=False, sentence_size=sentence_size)
         docs = loader.load()
+    elif filepath.lower().endswith(".tsv"):
+        loader = CSVLoader(filepath, csv_args={'delimiter': '	'})
+        # textsplitter = ChineseTextSplitter(pdf=False, sentence_size=sentence_size)
+        docs = loader.load()
     elif filepath.lower().endswith(".txt"):
         loader = TextLoader(filepath, autodetect_encoding=True)
         textsplitter = ChineseTextSplitter(pdf=False, sentence_size=sentence_size)

@@ -393,7 +393,7 @@ with gr.Blocks(css=block_css, theme=gr.themes.Default(**default_theme_args)) as 
                             load_file_button = gr.Button("上传文件并加载知识库")
                         with gr.Tab("上传文件夹"):
                             folder_files = gr.File(label="添加文件",
-                                                   # file_types=['.txt', '.md', '.docx', '.pdf'],
+                                                   # file_types=['.txt', '.csv', '.tsv', '.md', '.docx', '.pdf'],
                                                    file_count="directory",
                                                    show_label=False)
                             load_folder_button = gr.Button("上传文件夹并加载知识库")
