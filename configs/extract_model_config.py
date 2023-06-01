@@ -34,6 +34,67 @@ Here are some examples,
 ```{{text}}```
 """
 
+mr_summary_template = """
+Summarize the following text delimited by three backslashes into compressed JSON format with the following keys: drug, effect, gene, e.g. "[{"drug": "QSDP", "gene": "caudal", "effecf": "up- regulation"}]".
+```{{text}}```
+"""
+
+
+# multi_round_conversation_template_1 = """
+# Q :
+#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
+#  {{text}}
+# """
+#
+# multi_round_conversation_template_2 = """
+# Q :
+#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
+#
+# {{text}}
+#
+# A : {{STEP1}}
+# Q :
+# isn't there others? output,again
+# """
+#
+# multi_round_conversation_template_3 = """
+# Q :
+#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
+#
+# {{text}}
+#
+# A : {{STEP1}}
+# Q :
+# isn't there others? output,again
+# A : {{STEP2}}
+# Q :
+# just only list Gene or Proteins (format: 1.xxx 2.xxx) ,in belows:
+# {{STEP1}}
+#
+# {{STEP2}}
+# """
+#
+# multi_round_conversation_template_4 = """
+# Q :
+#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
+#
+# {{text}}
+#
+# A : {{STEP1}}
+# Q :
+# isn't there others? output,again
+# A : {{STEP2}}
+# Q :
+# just only list Gene or Proteins (format: 1.xxx 2.xxx) ,in belows:
+# {{STEP1}}
+#
+# {{STEP2}}
+# A : {{STEP3}}
+# Q :
+# is the effect of Qishen Yiqi , also called QSYQ, to those Gene/Protein(in belows) inhibit or improve expression? please only tell me inhibit or improve expression ,don't show other informations(format: 1.xxx 2.xxx):
+# {{STEP3}}
+# """
+
 
 # extract_template = """
 # Extracts drug gene relationships from the text below delimited by three backslashes and return them in JSON format with the following keys: drug, effect, gene. You are asked to follow the following steps.
@@ -59,36 +120,24 @@ Here are some examples,
 # List abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by the following text delimited by three backslashes.
 # ```{{text}}```
 # """
-
-multi_round_conversation_template_1 = """
-list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
-{{text}}
-"""
-
-multi_round_conversation_template_2 = """
-Previously I gave you the following text delimited by three backslashes and asked you to "List abbreviation of gene/protein, which Qishen Yiqi , also called QSYQ has effect of inhibit or improve."
-Your previous answer was "{{STEP1}}" Now I want to ask you "Isn't there another gene name or protein name? Output,again."
-
-```{{text}}```
-"""
-
-# multi_round_conversation_template_2 = """
-# Q:"list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow."{{text}}
-# A:"{{STEP1}}"
-# Q:"Isn't there another gene name or protein name? Output,again."
 #
+# multi_round_conversation_template_2 = """
+# Previously I gave you the following text delimited by three backslashes and asked you to "List abbreviation of gene/protein, which Qishen Yiqi , also called QSYQ has effect of inhibit or improve."
+# Your previous answer was "{{STEP1}}" Now I want to ask you "Isn't there another gene name or protein name? Output,again."
+#
+# ```{{text}}```
 # """
-
-multi_round_conversation_template_3 = """
-I will give you two sentences and ask you to summarize the names of all the genes and proteins that appear in these two sentences, separated by commas.
-Sentence 1, "{{STEP1}}"
-Sentence 2, "{{STEP2}}"
-"""
-
-multi_round_conversation_template_4 = """
-Answer the question based on the entity name and text delimited by three backslashes I gave you below. Note that you must use the compressed JSON string format I give you below for the output.
-ENTITY NAME:```{{STEP3}}```
-TEXT:```{{text}}```
-QUESTION:Is the effect of Qishen Yiqi (aka QSYQ) on these genes/proteins inhibit or improve expression? Please just tell me whether it is inhibit or improve expression and do not answer other information.
-OUTPUT FORMAT:"[{"drug": "QSDP", "gene": "PLA2", "effecf": "up-regulation"}, {"drug": "QSDP", "gene": "COX2", "effecf": "down-regulation"}]"
-"""
+#
+# multi_round_conversation_template_3 = """
+# I will give you two sentences and ask you to summarize the names of all the genes and proteins that appear in these two sentences, separated by commas.
+# Sentence 1, "{{STEP1}}"
+# Sentence 2, "{{STEP2}}"
+# """
+#
+# multi_round_conversation_template_4 = """
+# Answer the question based on the entity name and text delimited by three backslashes I gave you below. Note that you must use the compressed JSON string format I give you below for the output.
+# ENTITY NAME:```{{STEP3}}```
+# TEXT:```{{text}}```
+# QUESTION:Is the effect of Qishen Yiqi (aka QSYQ) on these genes/proteins inhibit or improve expression? Please just tell me whether it is inhibit or improve expression and do not answer other information.
+# OUTPUT FORMAT:"[{"drug": "QSDP", "gene": "PLA2", "effecf": "up-regulation"}, {"drug": "QSDP", "gene": "COX2", "effecf": "down-regulation"}]"
+# """

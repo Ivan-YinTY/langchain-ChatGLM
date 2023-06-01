@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import subprocess
 import pandas as pd
 from tqdm import tqdm
 from langchain.llms import OpenAI
@@ -64,49 +65,88 @@ def extract_text_relation(filepath, temperature=0):
     # 运行链式模型并返回结果
     return res, filepath
 
-
 def extract_text_relation_multiround(filepath, temperature=0):
     # 加载文件
-    article_text = load_article_file(filepath=filepath)
+    with open(filepath, 'r') as f:
+        abstract = f.read()
 
-    # 创建模板以及生成提示
-    multi_prompt_1 = PromptTemplate(template=multi_round_conversation_template_1, input_variables=["text"],
-                                    template_format="jinja2")
-    multi_prompt_2 = PromptTemplate(template=multi_round_conversation_template_2, input_variables=["text", "STEP1"],
-                                    template_format="jinja2")
-    multi_prompt_3 = PromptTemplate(template=multi_round_conversation_template_3, input_variables=["STEP1", "STEP2"],
-                                    template_format="jinja2")
-    multi_prompt_4 = PromptTemplate(template=multi_round_conversation_template_4, input_variables=["text", "STEP3"],
-                                    template_format="jinja2")
-    # print(extract_prompt.format(context=article_text))
+        if openai_model_name == "text-davinci-003":
+            mrcmd = f'python clitools/davinci003.py "{os.environ["OPENAI_API_KEY"]}" "{abstract}"'
+        elif openai_model_name == "gpt-3.5-turbo":
+            mrcmd = f'python clitools/gpt_3.5_turbo.py "{os.environ["OPENAI_API_KEY"]}" "{abstract}"'
+        else:
+            # 处理未知的模型名称
+            print(f"Unknown OpenAI model name: {openai_model_name}")
+            exit()
 
-    # 初始化LLM模型和链式模型
-    if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-3.5-turbo-0301":
-        from langchain.chat_models import ChatOpenAI
-        llm = ChatOpenAI(model_name=openai_model_name, temperature=temperature)
-    else:
-        llm = OpenAI(model_name=openai_model_name, temperature=temperature)
+        result = subprocess.run(mrcmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    STEP1_chain = LLMChain(llm=llm, prompt=multi_prompt_1, output_key="STEP1")
-    STEP2_chain = LLMChain(llm=llm, prompt=multi_prompt_2, output_key="STEP2")
-    STEP3_chain = LLMChain(llm=llm, prompt=multi_prompt_3, output_key="STEP3")
-    STEP4_chain = LLMChain(llm=llm, prompt=multi_prompt_4, output_key="STEP4")
+        output = result.stdout.decode('utf-8')
+        error_output = result.stderr.decode('utf-8')
+        print(output, '\n', error_output)
 
-    llm_chain = SequentialChain(
-        chains=[STEP1_chain, STEP2_chain, STEP3_chain, STEP4_chain],
-        input_variables=["text"],
-        # Here we return multiple variables
-        output_variables=["STEP1", "STEP2", "STEP3", "STEP4"],
-        verbose=True)
+        # 创建模板以及生成提示
+        mr_summary_prompt = PromptTemplate(template=mr_summary_template, input_variables=["text"], template_format="jinja2")
+        # print(extract_prompt.format(context=article_text))
 
-    time.sleep(2)
+        # 初始化LLM模型和链式模型
+        if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-3.5-turbo-0301":
+            from langchain.chat_models import ChatOpenAI
+            llm = ChatOpenAI(model_name=openai_model_name, temperature=temperature)
+        else:
+            llm = OpenAI(model_name=openai_model_name, temperature=temperature)
 
-    res = llm_chain(article_text)
+        llm_chain = LLMChain(prompt=mr_summary_prompt, llm=llm)
+        time.sleep(4)
 
-    # print(res)
+        res = llm_chain.run(output)
 
-    # 运行链式模型并返回结果
-    return res["STEP4"], filepath
+    return res, filepath
+
+# def extract_text_relation_multiround(filepath, temperature=0):
+#     # 加载文件
+#     article_text = load_article_file(filepath=filepath)
+#
+#     # 创建模板以及生成提示
+#     multi_prompt_1 = PromptTemplate(template=multi_round_conversation_template_1, input_variables=["text"],
+#                                     template_format="jinja2")
+#     multi_prompt_2 = PromptTemplate(template=multi_round_conversation_template_2, input_variables=["text", "STEP1"],
+#                                     template_format="jinja2")
+#     multi_prompt_3 = PromptTemplate(template=multi_round_conversation_template_3,
+#                                     input_variables=["text", "STEP1", "STEP2"],
+#                                     template_format="jinja2")
+#     multi_prompt_4 = PromptTemplate(template=multi_round_conversation_template_4,
+#                                     input_variables=["text", "STEP1", "STEP2", "STEP3"],
+#                                     template_format="jinja2")
+#     # print(extract_prompt.format(context=article_text))
+#
+#     # 初始化LLM模型和链式模型
+#     if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-3.5-turbo-0301":
+#         from langchain.chat_models import ChatOpenAI
+#         llm = ChatOpenAI(model_name=openai_model_name, temperature=temperature)
+#     else:
+#         llm = OpenAI(model_name=openai_model_name, temperature=temperature)
+#
+#     STEP1_chain = LLMChain(llm=llm, prompt=multi_prompt_1, output_key="STEP1")
+#     STEP2_chain = LLMChain(llm=llm, prompt=multi_prompt_2, output_key="STEP2")
+#     STEP3_chain = LLMChain(llm=llm, prompt=multi_prompt_3, output_key="STEP3")
+#     STEP4_chain = LLMChain(llm=llm, prompt=multi_prompt_4, output_key="STEP4")
+#
+#     llm_chain = SequentialChain(
+#         chains=[STEP1_chain, STEP2_chain, STEP3_chain, STEP4_chain],
+#         input_variables=["text"],
+#         # Here we return multiple variables
+#         output_variables=["STEP1", "STEP2", "STEP3", "STEP4"],
+#         verbose=True)
+#
+#     time.sleep(2)
+#
+#     res = llm_chain(article_text)
+#
+#     print(res)
+#
+#     # 运行链式模型并返回结果
+#     return res["STEP4"], filepath
 
 
 def format_text_relation(text, fp):
