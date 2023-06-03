@@ -10,7 +10,7 @@ openai_model_name = "gpt-3.5-turbo" #gpt-3.5-turbo / text-davinci-003
 LLM_TEMPERATURE = 0
 
 # 多轮对话提取模式
-MULTI_ROUND_CONVERSATION = True
+MULTI_ROUND_CONVERSATION = False
 
 # 文本分句长度
 SENTENCE_SIZE = 100
@@ -99,9 +99,8 @@ Summarize the following text delimited by three backslashes into compressed JSON
 # extract_template = """
 # Extracts drug gene relationships from the text below delimited by three backslashes and return them in JSON format with the following keys: drug, effect, gene. You are asked to follow the following steps.
 # Step 1, extract all contained gene name entities from each sentences. Note that '/' will not appear in the gene name, e.g. 'MMP-1/TIMP-1' is actually two genes 'MMP-1' and 'TIMP-1', splitting them.
-# Step 2, filter out the gene name entities related to QiShenYiQi Pills (also known as QSYQ, Qishenyiqi Dropping Pill, QSDP, QYDP, etc.) based on the results of the previous step.
-# Step 3, identify the relationship between the genetic entities selected in step 2 and QiShenYiQi Pills, which can only be defined by the up-regulation or down-regulation.
-# Step 4, summarize the result of step 3, de-duplicate and return in the specified JSON format. Usually you will find 2 to 20 groups of drug-gene correspondences, as many as possible.
+# Step 2, try to find possible interactions between each gene obtained in the previous step and QiShenYiQi Pills, defined only in terms of up- or down-regulation, the more the better. Note that the aliases or abbreviations Qishenyiqi Dropping Pill, QSDP, QYDP, QSYQ, etc. all refer to QiShenYiQi Pills.
+# Step 3, summarize the result of step 2, de-duplicate and return in the specified JSON format. Usually you will find 2 to 20 groups of drug-gene correspondences, as many as possible.
 # Here are some examples,
 # 1.if the text is "Expressions of phospholipase A2 (PLA2), cyclooxygenase 1 (COX1) and COX2 were also down-regulated in the QSDP-treated group. All in all the expression of COX1and COX2 could not be enhanced by QSDP.", the output should be "[{"drug": "QSDP", "gene": "PLA2", "effecf": "down-regulation"}, {"drug": "QSDP", "gene": "COX1", "effecf": "down-regulation"}, {"drug": "QSDP", "gene": "COX2", "effecf": "down-regulation"}]".
 # 2.if the text is "Downregulation of FOXO3a by QSYQ promotes breast cancer stem cell properties and tumorigenesis.", the output should be "[{"drug": "QSYQ", "gene": "FOXO3a", "effecf": "down-regulation"}]".

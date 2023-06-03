@@ -29,45 +29,46 @@ def load_article_file(filepath, sentence_size=SENTENCE_SIZE):
         # docs = loader.load_and_split(text_splitter=textsplitter)
         docs = loader.load()
 
-    if MULTI_ROUND_CONVERSATION == False:
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
-        )
-        # text_splitter = NLTKTextSplitter(
-        #     chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
-        # )
-        docs = text_splitter.split_documents(docs)
-        # print(docs[:3])
+
+    # text_splitter = RecursiveCharacterTextSplitter(
+    #     chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+    # )
+    # text_splitter = NLTKTextSplitter(
+    #     chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+    # )
+    # docs = text_splitter.split_documents(docs)
+    # print(docs[:3])
     return docs
 
 
 def extract_text_relation(filepath, temperature=0):
     # 加载文件
-    article_text = load_article_file(filepath=filepath)
+    # article_text = load_article_file(filepath=filepath)
+    with open(filepath, 'r', encoding='utf-8') as f:
+        article_text = f.read()
 
-    # 创建模板以及生成提示
-    extract_prompt = PromptTemplate(template=extract_template, input_variables=["text"], template_format="jinja2")
-    # print(extract_prompt.format(context=article_text))
+        # 创建模板以及生成提示
+        extract_prompt = PromptTemplate(template=extract_template, input_variables=["text"], template_format="jinja2")
+        # print(extract_prompt.format(context=article_text))
 
-    # 初始化LLM模型和链式模型
-    if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-3.5-turbo-0301":
-        from langchain.chat_models import ChatOpenAI
-        llm = ChatOpenAI(model_name=openai_model_name, temperature=temperature)
-    else:
-        llm = OpenAI(model_name=openai_model_name, temperature=temperature)
+        # 初始化LLM模型和链式模型
+        if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-3.5-turbo-0301":
+            from langchain.chat_models import ChatOpenAI
+            llm = ChatOpenAI(model_name=openai_model_name, temperature=temperature)
+        else:
+            llm = OpenAI(model_name=openai_model_name, temperature=temperature)
 
-    llm_chain = LLMChain(prompt=extract_prompt, llm=llm)
-    time.sleep(2)
+        llm_chain = LLMChain(prompt=extract_prompt, llm=llm)
+        time.sleep(2)
 
-    res = llm_chain.run(article_text)
-    # print(res)
+        res = llm_chain.run(article_text)
+        # print(res)
 
-    # 运行链式模型并返回结果
     return res, filepath
 
 def extract_text_relation_multiround(filepath, temperature=0):
     # 加载文件
-    with open(filepath, 'r') as f:
+    with open(filepath, 'r', encoding='utf-8') as f:
         abstract = f.read()
 
         if openai_model_name == "text-davinci-003":
