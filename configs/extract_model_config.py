@@ -24,6 +24,7 @@ CHUNK_OVERLAP = 150
 
 extract_template = """
 Extracts drug gene relationships from the text below delimited by three backslashes and return them in JSON format with the following keys: drug, effect, gene. You are asked to follow the following steps.
+Step 0, replace all abbreviations in the text with full words.
 Step 1, extract all contained gene name entities from each sentences. Note that '/' will not appear in the gene name, e.g. 'MMP-1/TIMP-1' is actually two genes 'MMP-1' and 'TIMP-1', splitting them.
 Step 2, try to find possible interactions between each gene obtained in the previous step and QiShenYiQi Pills, defined only in terms of up- or down-regulation, the more the better. Note that the aliases or abbreviations Qishenyiqi Dropping Pill, QSDP, QYDP, QSYQ, etc. all refer to QiShenYiQi Pills.
 Step 3, summarize the result of step 2, de-duplicate and return in the specified JSON format. Usually you will find 2 to 20 groups of drug-gene correspondences, as many as possible.
@@ -38,62 +39,6 @@ mr_summary_template = """
 Summarize the following text delimited by three backslashes into compressed JSON format with the following keys: drug, effect, gene, e.g. "[{"drug": "QSDP", "gene": "caudal", "effecf": "up- regulation"}]".
 ```{{text}}```
 """
-
-
-# multi_round_conversation_template_1 = """
-# Q :
-#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
-#  {{text}}
-# """
-#
-# multi_round_conversation_template_2 = """
-# Q :
-#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
-#
-# {{text}}
-#
-# A : {{STEP1}}
-# Q :
-# isn't there others? output,again
-# """
-#
-# multi_round_conversation_template_3 = """
-# Q :
-#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
-#
-# {{text}}
-#
-# A : {{STEP1}}
-# Q :
-# isn't there others? output,again
-# A : {{STEP2}}
-# Q :
-# just only list Gene or Proteins (format: 1.xxx 2.xxx) ,in belows:
-# {{STEP1}}
-#
-# {{STEP2}}
-# """
-#
-# multi_round_conversation_template_4 = """
-# Q :
-#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
-#
-# {{text}}
-#
-# A : {{STEP1}}
-# Q :
-# isn't there others? output,again
-# A : {{STEP2}}
-# Q :
-# just only list Gene or Proteins (format: 1.xxx 2.xxx) ,in belows:
-# {{STEP1}}
-#
-# {{STEP2}}
-# A : {{STEP3}}
-# Q :
-# is the effect of Qishen Yiqi , also called QSYQ, to those Gene/Protein(in belows) inhibit or improve expression? please only tell me inhibit or improve expression ,don't show other informations(format: 1.xxx 2.xxx):
-# {{STEP3}}
-# """
 
 
 # extract_template = """
