@@ -54,8 +54,13 @@ def ask(question):
 
 abstract = sys.argv[2]
 
+# prompt1 = f"""
+#  list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
+# {abstract}
+# """
+
 prompt1 = f"""
- list abbreviation of gene/protein,which Qishen Yiqi , also called QSYQ has effect of inhibit or improve by follow:
+ list abbreviation of gene/protein,which astragalus membranaceus(AM) , also called huangqi, milkvetch, astragalus, has effect of inhibit or improve by follow:
 {abstract} 
 """
 
@@ -82,8 +87,13 @@ ans3 = ask(prompt3)
 # print(ans3)
 
 
+# prompt4 = f"""
+# is the effect of Qishen Yiqi , also called QSYQ, to those Gene/Protein(in belows) inhibit or improve expression? please only tell me inhibit or improve expression:
+# {ans3}
+# """
+
 prompt4 = f"""
-is the effect of Qishen Yiqi , also called QSYQ, to those Gene/Protein(in belows) inhibit or improve expression? please only tell me inhibit or improve expression:
+is the effect of astragalus membranaceus(AM) , also called huangqi, milkvetch, astragalus, to those Gene/Protein(in belows) inhibit or improve expression? please only tell me inhibit or improve expression:
 {ans3}
 """
 

@@ -84,7 +84,7 @@ def extract_text_relation_multiround(filepath, temperature=0):
 
         output = result.stdout.decode('utf-8')
         error_output = result.stderr.decode('utf-8')
-        print(output, '\n', error_output)
+        # print(output, '\n', error_output)
 
         # 创建模板以及生成提示
         mr_summary_prompt = PromptTemplate(template=mr_summary_template, input_variables=["text"], template_format="jinja2")
