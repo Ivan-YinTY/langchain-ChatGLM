@@ -10,7 +10,7 @@ openai_model_name = "gpt-3.5-turbo" #gpt-3.5-turbo / text-davinci-003
 LLM_TEMPERATURE = 0
 
 # 多轮对话提取模式
-MULTI_ROUND_CONVERSATION = False
+MULTI_ROUND_CONVERSATION = True
 
 # 文本分句长度
 SENTENCE_SIZE = 100
@@ -35,9 +35,9 @@ CHUNK_OVERLAP = 150
 # """
 
 extract_template = """
-Extracts herb gene relationships from the text below delimited by three backslashes and return them in JSON format with the following keys: drug, effect, gene. You are asked to follow the following steps.
+Extracts drug(herb) gene relationships from the text below delimited by three backslashes and return them in JSON format with the following keys: drug(herb), effect, gene. You are asked to follow the following steps.
 Step 1, extract all contained gene name entities from each sentences. Note that '/' will not appear in the gene name, e.g. 'MMP-1/TIMP-1' is actually two genes 'MMP-1' and 'TIMP-1', splitting them.
-Step 2, try to find possible interactions between each gene obtained in the previous step and astragalus membranaceus(AM), defined only in terms of up- or down-regulation, the more the better. Note that the aliases or abbreviations huangqi, astragalus, milkvetch, etc. all refer to astragalus membranaceus(AM).
+Step 2, try to find possible interactions between each gene obtained in the previous step and astragalus membranaceus(AM), defined only in terms of up- or down-regulation, the more the better. Note that the aliases or abbreviations huangqi, astragalus, astragaloside, astragali, astragali radix (AR), astragalus polysaccharide (APS), milkvetch, etc. all refer to astragalus membranaceus(AM).
 Step 3, summarize the result of step 2, de-duplicate and return in the specified JSON format. Usually you will find 2 to 20 groups of drug-gene correspondences, as many as possible.
 Here are some examples,
 1.if the text is "Expressions of phospholipase A2 (PLA2), cyclooxygenase 1 (COX1) and COX2 were also down-regulated in the AM-treated group. All in all the expression of COX1and COX2 could not be enhanced by huangqi.", the output should be "[{"drug": "AM", "gene": "PLA2", "effecf": "down-regulation"}, {"drug": "AM", "gene": "COX1", "effecf": "down-regulation"}, {"drug": "AM", "gene": "COX2", "effecf": "down-regulation"}]".
@@ -47,7 +47,7 @@ Here are some examples,
 """
 
 mr_summary_template = """
-Summarize the following text delimited by three backslashes into compressed JSON format with the following keys: drug, effect, gene, e.g. "[{"drug": "huangqi", "gene": "caudal", "effecf": "up-regulation"}]".
+Summarize the following text delimited by three backslashes into compressed JSON format with the following keys: drug(herb), effect, gene, e.g. "[{"drug": "huangqi", "gene": "caudal", "effecf": "up-regulation"}]".
 ```{{text}}```
 """
 

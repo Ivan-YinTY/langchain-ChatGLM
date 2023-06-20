@@ -60,7 +60,7 @@ abstract = sys.argv[2]
 # """
 
 prompt1 = f"""
- list abbreviation of gene/protein,which astragalus membranaceus(AM) , also called huangqi, milkvetch, astragalus, has effect of inhibit or improve by follow:
+ list abbreviation of gene/protein,which astragalus membranaceus(AM) , also called huangqi, astragalus, astragaloside, astragali, astragali radix (AR), astragalus polysaccharide (APS), milkvetch, has effect of inhibit or improve by follow:
 {abstract} 
 """
 
@@ -93,7 +93,7 @@ ans3 = ask(prompt3)
 # """
 
 prompt4 = f"""
-is the effect of astragalus membranaceus(AM) , also called huangqi, milkvetch, astragalus, to those Gene/Protein(in belows) inhibit or improve expression? please only tell me inhibit or improve expression:
+is the effect of astragalus membranaceus(AM) , huangqi, astragalus, astragaloside, astragali, astragali radix (AR), astragalus polysaccharide (APS), milkvetch, to those Gene/Protein(in belows) inhibit or improve expression? please only tell me inhibit or improve expression:
 {ans3}
 """
 
