@@ -3,9 +3,7 @@ from langchain.llms.base import LLM
 from typing import Optional, List
 from models.loader import LoaderCheckPoint
 from models.base import (BaseAnswer,
-                         AnswerResult,
-                         AnswerResultStream,
-                         AnswerResultQueueSentinelTokenListenerQueue)
+                         AnswerResult)
 
 import torch
 
@@ -53,12 +51,11 @@ class MOSSLLM(BaseAnswer, LLM, ABC):
     def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
         pass
 
-    def _generate_answer(self, prompt: str,
+    def generatorAnswer(self, prompt: str,
                          history: List[List[str]] = [],
-                         streaming: bool = False,
-                         generate_with_callback: AnswerResultStream = None) -> None:
+                         streaming: bool = False):
         if len(history) > 0:
-            history = history[-self.history_len:-1] if self.history_len > 0 else []
+            history = history[-self.history_len:] if self.history_len > 0 else []
             prompt_w_history = str(history)
             prompt_w_history += '<|Human|>: ' + prompt + '<eoh>'
         else:
@@ -78,14 +75,14 @@ class MOSSLLM(BaseAnswer, LLM, ABC):
                 repetition_penalty=1.02,
                 num_return_sequences=1,
                 eos_token_id=106068,
-                pad_token_id=self.tokenizer.pad_token_id)
-            response = self.tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
+                pad_token_id=self.checkPoint.tokenizer.pad_token_id)
+            response = self.checkPoint.tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
             self.checkPoint.clear_torch_cache()
             history += [[prompt, response]]
             answer_result = AnswerResult()
             answer_result.history = history
             answer_result.llm_output = {"answer": response}
 
-            generate_with_callback(answer_result)
+            yield answer_result
 
 

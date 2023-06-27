@@ -39,7 +39,8 @@ class UnstructuredPaddlePDFLoader(UnstructuredFileLoader):
                         result = ocr.ocr(img_name)
                         ocr_result = [i[1][0] for line in result for i in line]
                         fout.write("\n".join(ocr_result))
-            os.remove(img_name)
+            if os.path.exists(img_name):
+                os.remove(img_name)
             return txt_file_path
 
         txt_file_path = pdf_ocr_txt(self.file_path)
@@ -48,7 +49,9 @@ class UnstructuredPaddlePDFLoader(UnstructuredFileLoader):
 
 
 if __name__ == "__main__":
-    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), "content", "samples", "test.pdf")
+    import sys
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), "knowledge_base", "samples", "content", "test.pdf")
     loader = UnstructuredPaddlePDFLoader(filepath, mode="elements")
     docs = loader.load()
     for doc in docs:
