@@ -7,12 +7,12 @@ api_key = sys.argv[1]
 openai.api_key = api_key
 
 
-def ask_gpt3(prompt):
+def ask_gpt4(prompt):
     attempts = 0
     while attempts < 5:
         try:
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4",
                 messages=prompt,
                 temperature=0
             )
@@ -49,7 +49,7 @@ def generate_prompt(prompt, questions, answers):
 def ask(question):
     questions.append(question)
     prompt = generate_prompt("", questions, answers)
-    answer = ask_gpt3(prompt)
+    answer = ask_gpt4(prompt)
     answers.append(answer)
     return answer
 

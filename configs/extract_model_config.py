@@ -10,7 +10,7 @@ openai_model_name = "gpt-3.5-turbo" #gpt-3.5-turbo / text-davinci-003
 LLM_TEMPERATURE = 0
 
 # 多轮对话提取模式
-MULTI_ROUND_CONVERSATION = True
+MULTI_ROUND_CONVERSATION = False
 
 # 文本分句长度
 SENTENCE_SIZE = 100

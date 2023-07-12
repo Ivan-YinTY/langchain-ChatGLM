@@ -52,7 +52,7 @@ def extract_text_relation(filepath, temperature=0):
         # print(extract_prompt.format(context=article_text))
 
         # 初始化LLM模型和链式模型
-        if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-3.5-turbo-0301":
+        if openai_model_name == "gpt-3.5-turbo" or openai_model_name == "gpt-4":
             from langchain.chat_models import ChatOpenAI
             llm = ChatOpenAI(model_name=openai_model_name, temperature=temperature)
         else:
@@ -75,6 +75,8 @@ def extract_text_relation_multiround(filepath, temperature=0):
             mrcmd = f'python clitools/davinci003.py "{os.environ["OPENAI_API_KEY"]}" "{abstract}"'
         elif openai_model_name == "gpt-3.5-turbo":
             mrcmd = f'python clitools/gpt_3.5_turbo.py "{os.environ["OPENAI_API_KEY"]}" "{abstract}"'
+        elif openai_model_name == "gpt-4":
+            mrcmd = f'python clitools/gpt_4.py "{os.environ["OPENAI_API_KEY"]}" "{abstract}"'
         else:
             # 处理未知的模型名称
             print(f"Unknown OpenAI model name: {openai_model_name}")
