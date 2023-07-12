@@ -34,7 +34,7 @@ CHUNK_OVERLAP = 150
 # """
 
 extract_template = """
-Extracts drug(herb) gene relationships from the text below delimited by three backslashes and return them in JSON format with the following keys: drug(herb), effect, gene. You are asked to follow the following steps.
+Extracts drug(herb) gene relationships from the text below delimited by three backslashes and return them in JSON format with the following keys: drug, effect, gene. You are asked to follow the following steps.
 Step 1: extract all the gene name entities contained in each sentence, if no gene name is found then you must return null and skip all the steps below. Note that the '/' will not appear in the gene names, e.g. 'MMP-1/TIMP-1' is actually two genes 'MMP-1' and 'TIMP-1', separate them.
 Step 2, try to find possible interactions between each gene obtained in the previous step and astragalus membranaceus(AM), defined only in terms of up- or down-regulation, the more the better. Note that the aliases or abbreviations huangqi, astragalus, astragaloside, astragali, astragali radix (AR), astragalus polysaccharide (APS), milkvetch, etc. all refer to astragalus membranaceus(AM).
 Step 3, summarize the result of step 2, de-duplicate and return in the specified JSON format. Usually you will find 2 to 20 groups of drug-gene correspondences, as many as possible.
